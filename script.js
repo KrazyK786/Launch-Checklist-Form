@@ -27,12 +27,56 @@ function init(){
    let cargoStatus = document.getElementById("cargoStatus");
    let launchStatus = document.getElementById("launchStatus");
    let faultyItems = document.getElementById("faultyItems");
+   let missionTarget = document.getElementById("missionTarget");
 
    let origFuelStatus = fuelStatus.textContent;
    let origCargoStatus = cargoStatus.textContent;
 
-
+   let jsonObjarr = [];
+   
    // helper functions
+   function updateMissionTarget(){
+      let randomIndex = Math.floor(Math.random() * jsonObjarr.length);
+      let planet = jsonObjarr[randomIndex];
+
+      let template = `
+      <h2>Mission Destination</h2>
+      <ol>
+         <li>Name: ${planet.name}</li>
+         <li>Diameter: ${planet.diameter}</li>
+         <li>Star: ${planet.star}</li>
+         <li>Distance from Earth: ${planet.distance}</li>
+         <li>Number of Moons: ${planet.moons}</li>
+      </ol>
+      <img src="${planet.image}">
+      `;
+
+      missionTarget.innerHTML = template;
+   }
+
+   function getJSON(){
+      fetch("https://handlers.education.launchcode.org/static/planets.json").then(function(response){
+         response.json().then(function(json){
+            // let jsonObjarr = [];
+            // let jsonContainer = JSON.parse(json);
+            console.log(json[0]);
+
+            for (let i = 0; i <json.length; i++){
+               // let jsonContainer = JSON.parse(json[i]);
+               let tempObj = {};
+               for (let key in json[i]){
+                  tempObj[key] = json[i][key];
+               }
+               jsonObjarr[i] = tempObj;
+            }
+            
+            // return jsonObjarr;
+            updateMissionTarget();
+         });
+      });
+      // console.log(jsonObjarr);
+   }
+
    function hasValue(value){
       let correct = true;
       if(value === ""){
@@ -98,6 +142,8 @@ function init(){
       // unhide faulty items
       faultyItems.style.visibility = "visible";
       event.preventDefault();
+
+      return ready;
    }
 
 
@@ -107,7 +153,12 @@ function init(){
       // perform validation check
       if (isValid()){
          // update/display faulty items section
-         showFaultyItems();
+         let readyForLaunch = showFaultyItems();
+         if (readyForLaunch){
+            getJSON();
+            console.log(jsonObjarr);
+            // updateMissionTarget();
+         }
       }
    });
 
