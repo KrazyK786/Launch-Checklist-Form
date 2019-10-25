@@ -94,13 +94,28 @@ function init(){
    function isValid(){
       let correct = true;
       if(!hasValue(pilotName.value) || !hasValue(copilotName.value) || !hasValue(fuelLevel.value) || !hasValue(cargoMass.value)){
+         // if faultyItems is already visible, re-hide
+         if (faultyItems.style.visibility === "visible"){
+            faultyItems.style.visibility = "hidden";
+            launchStatus.innerHTML = "";
+         }
+
          alert("All fields are required!");
+
          event.preventDefault();
          correct = false;
       }
       
       else if (!isNaN(pilotName.value) || !isNaN(copilotName.value) || pilotName.value < 1 || copilotName.value < 1 || fuelLevel.value < 0 || cargoMass.value < 0){
+         
+         // if faultyItems is already visible, re-hide
+         if (faultyItems.style.visibility === "visible"){
+            faultyItems.style.visibility = "hidden";
+            launchStatus.innerHTML = "";
+         }
+         
          alert("Make sure to enter valid information for each field!");
+
          event.preventDefault();
          correct = false;
       }
@@ -111,8 +126,8 @@ function init(){
    function showFaultyItems(){
       let ready = true;
       // add pilot/copilot name to shuttle requirements
-      pilotStatus.innerHTML = `${pilotName.value} ready`;
-      copilotStatus.innerHTML = `${copilotName.value} ready`;
+      pilotStatus.innerHTML = `Pilot ${pilotName.value} is ready`;
+      copilotStatus.innerHTML = `Pilot ${copilotName.value} is ready`;
 
       // update fuel level status if less than 10,000 -else resets innerhtml in case form was resubmitted
       if (fuelLevel.value < 10000){
